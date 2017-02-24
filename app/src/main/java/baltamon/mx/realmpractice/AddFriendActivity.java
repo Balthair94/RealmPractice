@@ -9,16 +9,22 @@ import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.widget.Button;
 
+import io.realm.Realm;
+
 /**
  * Created by Baltazar Rodriguez on 24/02/2017.
  */
 
 public class AddFriendActivity extends AppCompatActivity {
 
+    private Realm realm;
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_friend);
+        Realm.init(getApplicationContext());
+        realm = Realm.getDefaultInstance();
 
         setUpToolbar();
         startingObjects();

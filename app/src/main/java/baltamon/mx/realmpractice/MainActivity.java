@@ -8,16 +8,47 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
+import android.widget.ListView;
+import android.widget.Toast;
+
+import baltamon.mx.realmpractice.models.Friend;
+import io.realm.Realm;
+import io.realm.RealmResults;
 
 public class MainActivity extends AppCompatActivity {
+
+    private Realm realm;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        Realm.init(getApplicationContext());
+        realm = Realm.getDefaultInstance();
 
         setUPToolbar();
         setUpFloatingButton();
+
+        if (weHaveFriends())
+            fillFrendsList();
+        else
+            Toast.makeText(this, "You don't have friends", Toast.LENGTH_SHORT).show();
+
+    }
+
+    private void fillFrendsList() {
+        RealmResults<Friend> friends = realm.where(Friend.class).findAll();
+        ListView listView = (ListView) findViewById(R.id.listView);
+    }
+
+    public boolean weHaveFriends(){
+        RealmResults<Friend> friends = realm.where(Friend.class).findAll();
+
+        if (friends.isEmpty()) {
+            return false;
+        }
+
+        return true;
     }
 
     private void setUPToolbar() {
