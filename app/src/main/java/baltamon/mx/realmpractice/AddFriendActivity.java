@@ -7,6 +7,7 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
+import android.widget.Button;
 
 /**
  * Created by Baltazar Rodriguez on 24/02/2017.
@@ -20,6 +21,12 @@ public class AddFriendActivity extends AppCompatActivity {
         setContentView(R.layout.activity_add_friend);
 
         setUpToolbar();
+        startingObjects();
+    }
+
+    private void startingObjects() {
+        Button button = (Button) findViewById(R.id.btnActionButton);
+        button.setText("add friend");
     }
 
     private void setUpToolbar() {
