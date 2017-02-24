@@ -11,6 +11,7 @@ import android.view.View;
 import android.widget.ListView;
 import android.widget.Toast;
 
+import baltamon.mx.realmpractice.adapters.FriendListAdapter;
 import baltamon.mx.realmpractice.models.Friend;
 import io.realm.Realm;
 import io.realm.RealmResults;
@@ -18,6 +19,7 @@ import io.realm.RealmResults;
 public class MainActivity extends AppCompatActivity {
 
     private Realm realm;
+    private FriendListAdapter adapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,6 +41,8 @@ public class MainActivity extends AppCompatActivity {
     private void fillFrendsList() {
         RealmResults<Friend> friends = realm.where(Friend.class).findAll();
         ListView listView = (ListView) findViewById(R.id.listView);
+        adapter = new FriendListAdapter(getApplicationContext(), friends);
+        listView.setAdapter(adapter);
     }
 
     public boolean weHaveFriends(){
@@ -70,5 +74,17 @@ public class MainActivity extends AppCompatActivity {
                 startActivity(new Intent(MainActivity.this, AddFriendActivity.class));
             }
         });
+    }
+
+    @Override
+    protected void onRestart() {
+        super.onRestart();
+        adapter.notifyDataSetChanged();
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        realm.close();
     }
 }

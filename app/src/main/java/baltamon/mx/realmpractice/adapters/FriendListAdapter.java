@@ -30,7 +30,7 @@ public class FriendListAdapter extends RealmBaseAdapter<Friend> implements ListA
     @Override
     public View getView(int position, View contentView, ViewGroup parent) {
         ViewHolder viewHolder;
-        if (contentView != null){
+        if (contentView == null){
             contentView = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_friend_list, parent, false);
             viewHolder = new ViewHolder();
             viewHolder.friendName = (TextView) contentView.findViewById(R.id.tvFriendName);
