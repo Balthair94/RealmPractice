@@ -8,6 +8,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.Toast;
 
@@ -43,6 +44,23 @@ public class MainActivity extends AppCompatActivity {
         ListView listView = (ListView) findViewById(R.id.listView);
         adapter = new FriendListAdapter(getApplicationContext(), friends);
         listView.setAdapter(adapter);
+        onListViewItemClick(listView);
+    }
+
+    private void onListViewItemClick(ListView listView){
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                if (adapter.getItem(i) != null){
+                    int friendID = adapter.getItem(i).getId();
+                    Intent intent = new Intent(MainActivity.this, FriendDetailActivity.class);
+                    intent.putExtra("friendID", friendID);
+                    startActivity(intent);
+                } else {
+                    Toast.makeText(getApplicationContext(), "ERROR", Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
     }
 
     public boolean weHaveFriends(){
