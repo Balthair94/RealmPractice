@@ -7,6 +7,7 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
@@ -24,6 +25,7 @@ public class FriendDetailActivity extends AppCompatActivity {
 
     private Realm realm;
     private FriendViewHolder holder;
+    private Bundle bundle;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -36,7 +38,7 @@ public class FriendDetailActivity extends AppCompatActivity {
         startingObjects();
         startViewHolder();
 
-        Bundle bundle = getIntent().getExtras();
+        bundle = getIntent().getExtras();
         searchFriedn(bundle.getInt("friendID"));
     }
 
@@ -51,6 +53,39 @@ public class FriendDetailActivity extends AppCompatActivity {
     private void startingObjects() {
         Button button = (Button) findViewById(R.id.btnActionButton);
         button.setText("Update friend");
+        button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                updateFriend();
+            }
+        });
+    }
+
+    private void updateFriend(){
+        final Friend friend = new Friend();
+        friend.setId(bundle.getInt("friendID"));
+        friend.setFirstName(holder.friendFirstName.getText().toString());
+        friend.setLastName(holder.friendLastName.getText().toString());
+        friend.setEmail(holder.friendEmail.getText().toString());
+        friend.setPhoneNumber(holder.friendPhone.getText().toString());
+
+        realm.executeTransactionAsync(new Realm.Transaction() {
+            @Override
+            public void execute(Realm realm) {
+                realm.copyToRealmOrUpdate(friend);
+            }
+        }, new Realm.Transaction.OnSuccess() {
+            @Override
+            public void onSuccess() {
+                onBackPressed();
+            }
+        }, new Realm.Transaction.OnError() {
+            @Override
+            public void onError(Throwable error) {
+                Toast.makeText(getApplicationContext(), "Error updating friend", Toast.LENGTH_SHORT).show();
+                onBackPressed();
+            }
+        });
     }
 
     private void setUpToolbar() {

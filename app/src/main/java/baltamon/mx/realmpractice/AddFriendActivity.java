@@ -23,6 +23,7 @@ import io.realm.RealmResults;
 public class AddFriendActivity extends AppCompatActivity {
 
     private Realm realm;
+    private FriendViewHolder holder;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -33,6 +34,7 @@ public class AddFriendActivity extends AppCompatActivity {
 
         setUpToolbar();
         startingObjects();
+        startViewHolder();
     }
 
     private void startingObjects() {
@@ -48,17 +50,12 @@ public class AddFriendActivity extends AppCompatActivity {
     }
 
     private void addingFriend() {
-        EditText friendFirstName = (EditText) findViewById(R.id.etFirstName);
-        EditText friendLastName = (EditText) findViewById(R.id.etLastName);
-        EditText friendEmail = (EditText) findViewById(R.id.etEmail);
-        EditText friendPhone = (EditText) findViewById(R.id.etPhone);
-
         Friend friend = new Friend();
         friend.setId(getFriendID());
-        friend.setFirstName(friendFirstName.getText().toString());
-        friend.setLastName(friendLastName.getText().toString());
-        friend.setEmail(friendEmail.getText().toString());
-        friend.setPhoneNumber(friendPhone.getText().toString());
+        friend.setFirstName(holder.friendFirstName.getText().toString());
+        friend.setLastName(holder.friendLastName.getText().toString());
+        friend.setEmail(holder.friendEmail.getText().toString());
+        friend.setPhoneNumber(holder.friendPhone.getText().toString());
 
         callRealmTransaction(friend);
     }
@@ -103,6 +100,14 @@ public class AddFriendActivity extends AppCompatActivity {
             actionbar.setDisplayHomeAsUpEnabled(true);
             actionbar.setDisplayShowHomeEnabled(true);
         }
+    }
+
+    private void startViewHolder(){
+        holder = new FriendViewHolder();
+        holder.friendFirstName = (EditText) findViewById(R.id.etFirstName);
+        holder.friendLastName = (EditText) findViewById(R.id.etLastName);
+        holder.friendEmail = (EditText) findViewById(R.id.etEmail);
+        holder.friendPhone = (EditText) findViewById(R.id.etPhone);
     }
 
     @Override
