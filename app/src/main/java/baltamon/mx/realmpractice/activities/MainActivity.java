@@ -1,4 +1,4 @@
-package baltamon.mx.realmpractice;
+package baltamon.mx.realmpractice.activities;
 
 import android.content.Intent;
 import android.graphics.Color;
@@ -12,6 +12,7 @@ import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.Toast;
 
+import baltamon.mx.realmpractice.R;
 import baltamon.mx.realmpractice.adapters.FriendListAdapter;
 import baltamon.mx.realmpractice.models.Friend;
 import io.realm.Realm;
@@ -48,6 +49,9 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void onListViewItemClick(ListView listView){
+        /*
+        SEE FRIEND DETAIL
+         */
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
@@ -59,6 +63,38 @@ public class MainActivity extends AppCompatActivity {
                 } else {
                     Toast.makeText(getApplicationContext(), "ERROR", Toast.LENGTH_SHORT).show();
                 }
+            }
+        });
+
+        /*
+        DELETE FRIEND
+         */
+        listView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+            @Override
+            public boolean onItemLongClick(AdapterView<?> adapterView, View view, int i, long l) {
+                if (adapter.getItem(i) != null){
+                    final int friendID = adapter.getItem(i).getId();
+                    realm.executeTransactionAsync(new Realm.Transaction() {
+                        @Override
+                        public void execute(Realm realm) {
+                            realm.where(Friend.class).equalTo("id", friendID).findFirst().deleteFromRealm();
+                        }
+                    }, new Realm.Transaction.OnSuccess() {
+                        @Override
+                        public void onSuccess() {
+                            Toast.makeText(getApplicationContext(), "Goodbye friend", Toast.LENGTH_SHORT).show();
+                        }
+                    }, new Realm.Transaction.OnError() {
+                        @Override
+                        public void onError(Throwable error) {
+                            Toast.makeText(getApplicationContext(), "ERROR", Toast.LENGTH_SHORT).show();
+                        }
+                    });
+
+                    adapter.notifyDataSetChanged();
+                    return true;
+                } else
+                    return false;
             }
         });
     }

@@ -1,6 +1,5 @@
 package baltamon.mx.realmpractice;
 
-import android.view.View;
 import android.widget.EditText;
 
 /**
@@ -9,9 +8,9 @@ import android.widget.EditText;
 
 public class FriendViewHolder {
 
-    EditText friendFirstName;
-    EditText friendLastName;
-    EditText friendEmail;
-    EditText friendPhone;
+    public EditText friendFirstName;
+    public EditText friendLastName;
+    public EditText friendEmail;
+    public EditText friendPhone;
 
 }

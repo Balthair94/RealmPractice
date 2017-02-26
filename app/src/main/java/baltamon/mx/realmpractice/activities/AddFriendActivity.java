@@ -1,4 +1,4 @@
-package baltamon.mx.realmpractice;
+package baltamon.mx.realmpractice.activities;
 
 import android.graphics.Color;
 import android.os.Bundle;
@@ -12,67 +12,71 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import baltamon.mx.realmpractice.FriendViewHolder;
+import baltamon.mx.realmpractice.R;
 import baltamon.mx.realmpractice.models.Friend;
 import io.realm.Realm;
-import io.realm.RealmQuery;
 import io.realm.RealmResults;
 
 /**
  * Created by Baltazar Rodriguez on 24/02/2017.
  */
 
-public class FriendDetailActivity extends AppCompatActivity {
+public class AddFriendActivity extends AppCompatActivity {
 
     private Realm realm;
     private FriendViewHolder holder;
-    private Bundle bundle;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_friend_detail);
+        setContentView(R.layout.activity_add_friend);
         Realm.init(getApplicationContext());
         realm = Realm.getDefaultInstance();
 
         setUpToolbar();
         startingObjects();
         startViewHolder();
-
-        bundle = getIntent().getExtras();
-        searchFriedn(bundle.getInt("friendID"));
-    }
-
-    private void searchFriedn(int friendID) {
-        Friend friend = realm.where(Friend.class).equalTo("id",friendID).findFirst();
-        holder.friendFirstName.setText(friend.getFirstName());
-        holder.friendLastName.setText(friend.getLastName());
-        holder.friendEmail.setText(friend.getEmail());
-        holder.friendPhone.setText(friend.getPhoneNumber());
     }
 
     private void startingObjects() {
         Button button = (Button) findViewById(R.id.btnActionButton);
-        button.setText("Update friend");
+        button.setText("add friend");
+
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                updateFriend();
+                addingFriend();
             }
         });
     }
 
-    private void updateFriend(){
-        final Friend friend = new Friend();
-        friend.setId(bundle.getInt("friendID"));
+    private void addingFriend() {
+        Friend friend = new Friend();
+        friend.setId(getFriendID());
         friend.setFirstName(holder.friendFirstName.getText().toString());
         friend.setLastName(holder.friendLastName.getText().toString());
         friend.setEmail(holder.friendEmail.getText().toString());
         friend.setPhoneNumber(holder.friendPhone.getText().toString());
 
+        callRealmTransaction(friend);
+    }
+
+    private int getFriendID(){
+        RealmResults<Friend> results = realm.where(Friend.class).findAll();
+
+        if (results.isEmpty())
+            return 1;
+        else
+            return results.max("id").intValue() + 1;
+
+    }
+
+    private void callRealmTransaction(final Friend friend) {
         realm.executeTransactionAsync(new Realm.Transaction() {
             @Override
-            public void execute(Realm realm) {
-                realm.copyToRealmOrUpdate(friend);
+            public void execute(Realm bgRealm) {
+                Friend saveFriend = bgRealm.copyToRealm(friend);
             }
         }, new Realm.Transaction.OnSuccess() {
             @Override
@@ -82,8 +86,7 @@ public class FriendDetailActivity extends AppCompatActivity {
         }, new Realm.Transaction.OnError() {
             @Override
             public void onError(Throwable error) {
-                Toast.makeText(getApplicationContext(), "Error updating friend", Toast.LENGTH_SHORT).show();
-                onBackPressed();
+                Toast.makeText(getApplicationContext(), "Error adding friend", Toast.LENGTH_SHORT).show();
             }
         });
     }
@@ -95,7 +98,7 @@ public class FriendDetailActivity extends AppCompatActivity {
 
         ActionBar actionbar = getSupportActionBar();
         if (actionbar != null){
-            actionbar.setTitle("Friend Detail");
+            actionbar.setTitle("Add friend");
             actionbar.setDisplayHomeAsUpEnabled(true);
             actionbar.setDisplayShowHomeEnabled(true);
         }
