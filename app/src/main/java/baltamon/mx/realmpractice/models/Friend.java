@@ -1,5 +1,6 @@
 package baltamon.mx.realmpractice.models;
 
+import io.realm.RealmList;
 import io.realm.RealmObject;
 import io.realm.annotations.PrimaryKey;
 
@@ -13,6 +14,7 @@ public class Friend extends RealmObject {
     private String lastName;
     private String email;
     private String phoneNumber;
+    private RealmList<Pet> pets;
 
     @PrimaryKey
     private int id;
@@ -57,5 +59,13 @@ public class Friend extends RealmObject {
 
     public void setPhoneNumber(String phoneNumber) {
         this.phoneNumber = phoneNumber;
+    }
+
+    public RealmList<Pet> getPets() {
+        return pets;
+    }
+
+    public void setPets(RealmList<Pet> pets) {
+        this.pets = pets;
     }
 }

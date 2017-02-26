@@ -12,10 +12,14 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import java.io.FileNotFoundException;
+
 import baltamon.mx.realmpractice.FriendViewHolder;
+import baltamon.mx.realmpractice.MigrationVersion;
 import baltamon.mx.realmpractice.R;
 import baltamon.mx.realmpractice.models.Friend;
 import io.realm.Realm;
+import io.realm.RealmConfiguration;
 import io.realm.RealmResults;
 
 /**
@@ -31,12 +35,20 @@ public class AddFriendActivity extends AppCompatActivity {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_friend);
-        Realm.init(getApplicationContext());
-        realm = Realm.getDefaultInstance();
+        setUpRealm();
 
         setUpToolbar();
         startingObjects();
         startViewHolder();
+    }
+
+    private void setUpRealm(){
+        Realm.init(getApplicationContext());
+
+        RealmConfiguration configuration = new RealmConfiguration.Builder()
+                .name("database.realm").schemaVersion(1).build();
+
+        realm = Realm.getInstance(configuration);
     }
 
     private void startingObjects() {

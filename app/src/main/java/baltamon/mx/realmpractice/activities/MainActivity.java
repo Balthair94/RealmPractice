@@ -12,10 +12,14 @@ import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.Toast;
 
+import java.io.FileNotFoundException;
+
+import baltamon.mx.realmpractice.MigrationVersion;
 import baltamon.mx.realmpractice.R;
 import baltamon.mx.realmpractice.adapters.FriendListAdapter;
 import baltamon.mx.realmpractice.models.Friend;
 import io.realm.Realm;
+import io.realm.RealmConfiguration;
 import io.realm.RealmResults;
 
 public class MainActivity extends AppCompatActivity {
@@ -27,8 +31,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        Realm.init(getApplicationContext());
-        realm = Realm.getDefaultInstance();
+        setUpRealm();
 
         setUPToolbar();
         setUpFloatingButton();
@@ -38,6 +41,22 @@ public class MainActivity extends AppCompatActivity {
         else
             Toast.makeText(this, "You don't have friends", Toast.LENGTH_SHORT).show();
 
+    }
+
+    private void setUpRealm(){
+        Realm.init(getApplicationContext());
+
+        RealmConfiguration configuration = new RealmConfiguration.Builder()
+                .name("database.realm").schemaVersion(1).build();
+
+        //THE MIGRATION
+        try {
+            Realm.migrateRealm(configuration, new MigrationVersion());
+        } catch (FileNotFoundException e) {
+            Toast.makeText(this, e.toString(), Toast.LENGTH_SHORT).show();
+        }
+
+        realm = Realm.getInstance(configuration);
     }
 
     private void fillFrendsList() {
@@ -133,7 +152,11 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onRestart() {
         super.onRestart();
-        adapter.notifyDataSetChanged();
+
+        if (adapter == null)
+            fillFrendsList();
+        else
+            adapter.notifyDataSetChanged();
     }
 
     @Override
