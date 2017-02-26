@@ -12,16 +12,11 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
-import java.io.FileNotFoundException;
-
 import baltamon.mx.realmpractice.FriendViewHolder;
-import baltamon.mx.realmpractice.MigrationVersion;
 import baltamon.mx.realmpractice.R;
 import baltamon.mx.realmpractice.models.Friend;
 import io.realm.Realm;
 import io.realm.RealmConfiguration;
-import io.realm.RealmQuery;
-import io.realm.RealmResults;
 
 /**
  * Created by Baltazar Rodriguez on 24/02/2017.
@@ -49,9 +44,7 @@ public class FriendDetailActivity extends AppCompatActivity {
 
     private void setUpRealm(){
         Realm.init(getApplicationContext());
-
         RealmConfiguration config = new RealmConfiguration.Builder().name("database.realm").schemaVersion(1).build();
-
         realm = Realm.getInstance(config);
     }
 
